@@ -1,1 +1,446 @@
-网站维护
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年春节倒计时</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #8b0000, #b22222, #8b0000);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #ffd700, #ff8c00, #ff4500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .year-display {
+            font-size: 8rem;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
+            margin: 1rem 0;
+            animation: pulse 2s infinite;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1: wrap;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 150px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .countdown-box:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .countdown-value {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .countdown-label {
+            font-size: 1.2            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .message {
+            font-size: 1.8rem;
+            margin: 2rem 0;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: fadeIn 2s ease;
+        }
+
+        .fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #ffd700;
+            box-shadow: 0 0 10px #ffd700;
+            animation: firework 2s ease-out infinite;
+        }
+
+        .lantern {
+            position: absolute;
+            font-size: 3rem;
+            color: #ff4500;
+            text-shadow: 0 0 10px rgba(255, 69, 0, 0.7);
+            animation: float 6s infinite ease-in-out;
+            z-index: 5;
+        }
+
+        .lantern:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .lantern:nth-child(2) {
+            top: 20%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        .lantern:nth-child(3) {
+            bottom: 15%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+
+        .lantern:nth-child(4) {
+            bottom: 25%;
+            right: 5%;
+            animation-delay: 3s;
+        }
+
+        .blessing {
+            position: absolute;
+            font-size: 5rem;
+            color: #ffd700;
+            opacity: 0.1;
+            transform: rotate(-30deg);
+            z-index: 0;
+            top: 30%;
+            left: 20%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .blessing:nth-child(blessing:nth-child(2) {
+            top: 60%;
+            left: 60%;
+            transform: rotate(20deg);
+        }
+
+        footer {
+            margin-top: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .spring-festival-info {
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .spring-festival-info h2 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .spring-festival-info p {
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes firework {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(-30deg); }
+            100% { transform: rotate(330deg); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .year-display {
+                font-size: 5rem;
+            }
+            
+            .countdown-box {
+                min-width: 120px;
+                padding: 1rem;
+            }
+            
+            .countdown-value {
+                font-size: 2.5rem;
+            }
+            
+            .message {
+                font-size: 1.4rem;
+            }
+            
+            .lantern {
+                font-size: 2rem;
+            }
+            
+            .blessing {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+max-width: 480px) {
+            .countdown-container {
+                gap: 0.8rem;
+            }
+            
+            .countdown-box {
+                min-width: 80px;
+                padding: 0.8rem;
+            }
+            
+            .countdown;
+            }
+            
+            .countdown-value {
+                font-size: 2rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.9rem;
+            }
+            
+            .spring-festival-info {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 灯笼装饰 -->
+    <div class="lantern">🏮</div>
+    <div class="lantern">🏮</div>
+    <div class="lantern">🏮</div>
+    <div class="lantern">🏮</div>
+    
+    <!-- 福字装饰 -->
+    <div class="blessing">福</div>
+    <div class="blessing">春</div>
+    
+    <!-- 烟花效果容器 -->
+    <div class="fireworks" id="fireworks"></div>
+    
+    <div class="container">
+        <header>
+            <h1>2026年春节倒计时</h1>
+            <p class="subtitle">2026年春节是2月16日（农历正月初2月16日（农历正月初一）</p >
+            <div class="year-display">春节</div>
+        </header>
+        
+        <div class="countdown-container">
+            <div class="countdown-box">
+                <div class="countdown-value" id="days">00</div>
+                <div class="countdown-label">天</div>
+            </div>
+            <div class="countdown-box">
+                <div class="countdown-value" id="hours="countdown-value" id="hours">00</div>
+                <div class="countdown-label">小时</div>
+            </div>
+            <div class="countdown-box">
+                <div class="countdown-value" id="minutes">00</div>
+                <div class="countdown-label">分钟</div>
+            </div>
+            <div class="countdown-box">
+                <div class="countdown-value" id="seconds">00</div>
+                <div class="countdown-label">秒</div>
+            </div>
+        </div>
+        
+        <div class="message" id="message">准备迎接2026年春节！</div>
+        
+        <div class="spring-festival-info">
+            <h2><i class="fas fa-info-circle"></i> 春节小知识</h2>
+            <p>春节，即农历新年，是中国及一些亚洲国家最重要的传统节日。2026年春节是2月16日（农历丙午年正月初一）。春节习俗包括贴春联、放鞭炮、吃年夜饭、给压岁钱等，象征着辞旧迎新、团圆平安。</p >
+        </div>
+        
+        <footer>
+            <p>© 2025 春节倒计时 | 设计：创意前端开发</p >
+        </footer>
+    </div>
+
+    <script>
+        // 倒计时功能 - 目标日期为2026年2月16日（春节）
+        function updateCountdown() {
+            const now = new Date();
+            const springFestival = new Date(2026, 1, 16, 0, 0, 0); // 2026年2月16日
+            
+            const diff = springFestival - now;
+            
+            if (diff <= 0) {
+                document.getElementById('message').textContent = "新年快乐！2026年春节已到来！";
+2026年春节已到来！";
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // 当倒计时接近结束时更新消息
+            if (days === 0) {
+                document.getElementById('message').textContent = "春节即将到来！准备迎接新年！";
+            }
+        }
+        
+        // 创建烟花效果
+        function createFire创建烟花效果
+        function createFireworks() {
+            const fireworksContainer = document.getElementById('fireworks');
+            const colors = ['#ffd700', '#ff8c00', '#ff4500', '#ff1493', '#00ffff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                
+                // 随机位置
+                firework.style.left = `${Math.random() * 100}vw`;
+                firework.style.top = `${Math.random() * 100}vhMath.random() * 100}vh`;
+                
+                // 随机颜色
+                firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                firework.style.boxShadow = `0 0 10px ${firework.style.backgroundColor}`;
+                
+                // 随机大小
+                const size = Math.random() * 3 + 2;
+                firework.style.width = `${size}px`;
+                firework.style.height = `${size}px`;
+                
+                // 随机动画延迟和持续时间
+                firework.style延迟和持续时间
+                firework.style.animationDelay = `${Math.random() * 5}s`;
+                firework.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                
+                fireworksContainer.appendChild(firework);
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+            createFireworks();
+        });
+    </script>
+</body>
+</html>
