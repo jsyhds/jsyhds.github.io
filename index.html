@@ -3,54 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音乐播放器</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>中国春节倒计时</title>
+
+    <!-- OpenGraph 标签 -->
+    <meta property="og:title" content="中国春节倒计时" />
+    <meta property="og:description" content="查看中国春节的倒计时，了解春节日期和剩余时间。" />
+    <meta property="og:image" content="https://i.postimg.cc/5thzx8qN/ny.jpg" />
+    <meta property="og:url" content="https://ny.aiwv.tech" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="中国春节倒计时" />
+
+    <!-- 引入Google Fonts的Ma Shan Zheng字体 -->
+    <link href="https://i.postimg.cc/y8whdq7H/ny.png" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            font-family: 'Ma Shan Zheng', cursive;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 背景图片样式 */
+        .background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.postimg.cc/y8whdq7H/ny.png') no-repeat center center/cover;
+            z-index: -3;
+            opacity: 1.2;
+        }
+
+        /* 烟花画布 */
+        #fireworks-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* 确保烟花在背景之上，内容之下 */
+            pointer-events: none; /* 确保点击事件不被烟花遮挡 */
+        }
+
+        /* 主容器样式 */
+        .container {
+            text-align: center;
+            padding: 30px 40px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.7);
+            animation: fadeIn 1s ease-out;
+            z-index: 1; /* 确保内容在烟花之上 */
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            animation: glow 2s infinite alternate;
+        }
+
+        .time, .cny-date, .countdown {
+            font-size: 2em; /* 增大时钟字体 */
+            margin: 15px 0;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        /* 文字动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 文字发光效果 */
+        @keyframes glow {
+            from { text-shadow: 2px 2px 8px rgba(255,215,0,0.7); }
+            to { text-shadow: 2px 2px 20px rgba(255,215,0,1); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .time, .cny-date, .countdown {
+                font-size: 1.5em; /* 移动端适当减小字体 */
+            }
+            .container {
+                padding: 20px 25px;
+            }
+        }
+
+        /* 底部滚动字幕 */
+        .scrolling-message {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            font-size: 65px;
+            color: yellow;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .scrolling-message span {
+            display: inline-block;
+            padding-left: 100%; /* 初始位置在屏幕右侧 */
+            animation: scrollText 26s linear infinite; /* 减慢滚动速度 */
+        }
+
+        @keyframes scrollText {
+            0% {
+                transform: translateX(0); /* 从屏幕右侧边缘开始 */
+            }
+            100% {
+                transform: translateX(-100%); /* 滚动到屏幕左侧 */
+            }
+        }
+
+        /* 禁止声音按钮 */
+        .sound-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .sound-btn svg {
+            fill: white;
+            width: 24px;
+            height: 24px;
+        }
+    </style>
 </head>
 <body>
-    <div class="player-container">
-        <div class="card">
-            <div class="header">
-               
-                <div class="time-info"></div>
-               
-                <div class="date-info"></div>
-            </div>
-            <div class="music-info">
-                <div class="cover">
-                    <img src="" alt="" id="cover">
-                </div>
-                <h2 class="song-name"></h2>
-                <p class="artist-name"></p>
-                <div class="time-range">
-                    <span class="current-time">00:00</span>
-                    <span class="total-time">00:00</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress"></div>
-                </div>
-            </div>
-            <div class="controls">
-                <button class="control-btn" id="prevBtn">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button class="control-btn" id="playBtn">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="control-btn" id="nextBtn">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-            </div>
-            <div class="hitokoto">
-                <p class="hitokoto-text"></p>
-                <p class="hitokoto-from"></p>
-            </div>
-            <div class="decoration"></div>
-            <div class="decoration-right"></div>
-        </div>
-        
+    <!-- 背景图片 -->
+    <div class="background"></div>
+
+    <!-- 烟花画布 -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <!-- 主内容 -->
+    <div class="container">
+        <h1>中国春节倒计时</h1>
+        <div class="time">当前时间：<span id="currentTime">--:--:--</span></div>
+        <div class="cny-date">中国春节日期：<span id="cnyDate">--</span></div>
+        <div class="countdown">倒计时：<span id="countdown">--天 --小时 --分钟 --秒</span></div>
     </div>
-    <audio id="audio" src=""></audio>
-    <script src="script.js"></script>
+
+    <!-- 在页面底部添加滚动字幕 -->
+    <div class="scrolling-message">
+        <span>小张年度寄语：得失平常事，是非任由之，恩怨心不愧，冷暖我自知，坎坷人生路，曲折事业梯，凡事不必太在意，愿你一生好运气!新年快乐。</span>
+    </div>
+
+    <script>
+        // 当前时间和倒计时
+        const currentTimeEl = document.getElementById('currentTime');
+        const cnyDateEl = document.getElementById('cnyDate');
+        const countdownEl = document.getElementById('countdown');
+
+        // 中国春节日期（2020-2030）
+        const cnyDates = {
+            2020: '2020-01-25',
+            2021: '2021-02-12',
+            2022: '2022-02-01',
+            2023: '2023-01-22',
+            2024: '2024-02-10',
+            2025: '2025-01-29',
+            2026: '2026-02-17',
+            2027: '2027-02-06',
+            2028: '2028-01-26',
+            2029: '2029-02-13',
+            2030: '2030-02-03'
+        };
+
+        function updateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const date = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            currentTimeEl.textContent = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+
+            // 获取中国春节日期
+            let cnyYear = year;
+            let cnyDateStr = cnyDates[cnyYear];
+            let cnyDate = cnyDateStr ? new Date(cnyDateStr + 'T00:00:00') : null;
+
+            // 如果今年的中国春节已经过去，使用明年的
+            if (cnyDate && now > cnyDate) {
+                cnyYear += 1;
+                cnyDateStr = cnyDates[cnyYear];
+                if(cnyDateStr){
+                   cnyDate = new Date(cnyDateStr + 'T00:00:00');
+                } else {
+                    // 如果超出预设年份，提示无法计算
+                    cnyDateEl.textContent = '无法计算';
+                    countdownEl.textContent = '--';
+                    return;
+                }
+            }
+             if (cnyDate) {
+                  const cnyMonth = String(cnyDate.getMonth() + 1).padStart(2, '0');
+                  const cnyDay = String(cnyDate.getDate()).padStart(2, '0');
+                  cnyDateEl.textContent = `${cnyYear}-${cnyMonth}-${cnyDay}`;
+
+                 // 计算倒计时
+                 const diff = cnyDate - now;
+                   if(diff <=0){
+                   countdownEl.textContent = '今天是中国春节！';
+                    return;
+                 }
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                 const hoursLeft = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                 const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+                countdownEl.textContent = `${days}天 ${hoursLeft}小时 ${minutesLeft}分钟 ${secondsLeft}秒`;
+            } else {
+                // 如果无法获取中国春节日期
+                cnyDateEl.textContent = '无法计算';
+                countdownEl.textContent = '--';
+            }
+        }
+
+        // 更新每秒
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // 烟花效果
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 烟花粒子类
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 2 + 1;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 5,
+                    y: (Math.random() - 0.5) * 5
+                };
+                this.alpha = 1;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+
+            update() {
+                this.draw();
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.01;
+            }
+        }
+
+        // 烟花类
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.particles = [];
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+
+            update() {
+                this.particles.forEach((particle, index) => {
+                    if (particle.alpha <= 0) {
+                        this.particles.splice(index, 1);
+                    } else {
+                        particle.update();
+                    }
+                });
+            }
+        }
+
+        // 烟花数组
+        let fireworks = [];
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除画布，保留背景
+
+            fireworks.forEach((firework, index) => {
+                if (firework.particles.length === 0) {
+                    fireworks.splice(index, 1);
+                } else {
+                    firework.update();
+                }
+            });
+        }
+
+        // 随机生成烟花
+        function createFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+            fireworks.push(new Firework(x, y, color));
+        }
+
+        // 每 500 毫秒生成一个烟花
+        setInterval(createFirework, 500);
+
+        // 开始动画
+        animate();
+
+        // 禁止声音按钮逻辑
+        //const soundBtn = document.querySelector('.sound-btn');
+        //let isSoundOn = true;
+
+        //soundBtn.addEventListener('click', () => {
+         //   isSoundOn = !isSoundOn;
+         //   soundBtn.innerHTML = isSoundOn
+         //       ? '<path id="icon-sound-on" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>'
+         //       : '<path id="icon-sound-off" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+        //});
+    </script>
 </body>
-</html> 
+</html>
+
+
+
+
